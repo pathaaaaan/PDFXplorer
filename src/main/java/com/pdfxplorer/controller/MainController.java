@@ -1,7 +1,6 @@
 package com.pdfxplorer.controller;
 import javafx.scene.layout.VBox;
 import org.apache.pdfbox.text.PDFTextStripper;
-import com.pdfxplorer.service.PdfReaderService;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -14,12 +13,11 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.Scene;
-import java.awt.geom.Rectangle2D;
 import com.pdfxplorer.util.SearchHighlighter;
 import javafx.application.Platform;
 // JavaFX
 import javafx.scene.layout.StackPane;
-import javafx.scene.Scene;
+
 import javafx.scene.control.ScrollPane;
 // PDFBox
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -42,9 +40,6 @@ public class MainController {
     @FXML private ScrollPane scrollPane;
     @FXML private VBox multiPageContainer;
     @FXML private Button openButton;
-    @FXML private Button nextButton;
-    @FXML private Button prevButton;
-    @FXML private ImageView imageView;
     @FXML private TextField searchField;
     @FXML private Button searchButton;
     @FXML private Button zoomInButton;
@@ -60,9 +55,8 @@ public class MainController {
 
     @FXML
     public void initialize() {
-        openButton.setOnAction(e -> openPdf());
-        nextButton.setOnAction(e -> showNextPage());
-        prevButton.setOnAction(e -> showPreviousPage());
+//        openButton.setOnAction(e -> handleOpenPdf());
+        openButton.setOnAction(e -> handleOpenPdf()); // ✅ Correct
         searchButton.setOnAction(e -> performSearch());
 
         zoomInButton.setOnAction(e -> {
@@ -77,41 +71,8 @@ public class MainController {
 
         darkModeToggle.setOnAction(e -> toggleTheme());
 
-        imageView.setOnScroll(event -> {
-            double deltaY = event.getDeltaY();
-            if (deltaY < 0) {
-                // Scrolling down
-                if (currentPage < document.getNumberOfPages() - 1) {
-                    currentPage++;
-                    showPage(currentPage);
-                }
-            } else if (deltaY > 0) {
-                // Scrolling up
-                if (currentPage > 0) {
-                    currentPage--;
-                    showPage(currentPage);
-                }
-            }
-            event.consume();
-        });
 
 
-        imageView.setOnScroll(event -> {
-            long now = System.currentTimeMillis();
-            if (now - lastScrollTime < 300) return; // 300ms delay
-            lastScrollTime = now;
-
-            double deltaY = event.getDeltaY();
-            if (deltaY < 0 && currentPage < document.getNumberOfPages() - 1) {
-                currentPage++;
-                showPage(currentPage);
-            } else if (deltaY > 0 && currentPage > 0) {
-                currentPage--;
-                showPage(currentPage);
-            }
-
-            event.consume();
-        });
     }
 
     @FXML
@@ -159,28 +120,10 @@ public class MainController {
     }
 
     private void showPage(int pageIndex) {
-        try {
-            float dpi = 150 * zoomLevel;
-            BufferedImage bImage = renderer.renderImageWithDPI(pageIndex, dpi);
-            Image fxImage = SwingFXUtils.toFXImage(bImage, null);
-            imageView.setImage(fxImage);
-            currentPage = pageIndex;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        currentPage = pageIndex;
+        // No action needed for continuous scroll since all pages are rendered
     }
 
-    private void showNextPage() {
-        if (document != null && currentPage < document.getNumberOfPages() - 1) {
-            showPage(currentPage + 1);
-        }
-    }
-
-    private void showPreviousPage() {
-        if (document != null && currentPage > 0) {
-            showPage(currentPage - 1);
-        }
-    }
 
 
     private void drawHighlight(float x, float y, float width, float height) {
@@ -242,7 +185,7 @@ public class MainController {
     private boolean darkModeEnabled = false;
 
     private void toggleTheme() {
-        Scene scene = imageView.getScene();  // Access any known node's scene
+        Scene scene = scrollPane.getScene();  // Use ScrollPane's scene for theme
         if (scene == null) return;
 
         if (darkModeEnabled) {

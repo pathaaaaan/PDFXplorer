@@ -13,17 +13,12 @@ public class Main extends Application {
         stage.setTitle("PDFXplorer");
         stage.setScene(scene);
         stage.show();
+        MainController controller = loader.getController(); // Extract once
         scene.setOnKeyPressed(event -> {
             if (event.isControlDown() || event.isMetaDown()) {
                 switch (event.getCode()) {
-                    case PLUS, EQUALS -> {
-                        MainController controller = loader.getController();
-                        controller.zoomInFromShortcut();
-                    }
-                    case MINUS -> {
-                        MainController controller = loader.getController();
-                        controller.zoomOutFromShortcut();
-                    }
+                    case PLUS, EQUALS -> controller.zoomInFromShortcut();
+                    case MINUS -> controller.zoomOutFromShortcut();
                 }
             }
         });
