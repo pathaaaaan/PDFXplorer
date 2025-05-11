@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.pdfxplorer.controller.MainController">
+
+    <top>
+        <ToolBar>
+            <Button fx:id="openButton" text="Open PDF"/>
+            <Button fx:id="prevButton" text="Previous"/>
+            <Button fx:id="nextButton" text="Next"/>
+            <TextField fx:id="searchField" promptText="Search..." />
+            <Button fx:id="searchButton" text="Search"/>
+            <Button text="Open PDF" onAction="#handleOpenPdf"/>
+            <Button fx:id="zoomInButton" text="Zoom In" />
+            <Button fx:id="zoomOutButton" text="Zoom Out" />
+            <ToggleButton fx:id="darkModeToggle" text="🌙 Dark Mode"/>
+        </ToolBar>
+    </top>
+
+<!--    <center>-->
+<!--        <ScrollPane fitToWidth="true" fitToHeight="true">-->
+<!--            <ImageView fx:id="imageView" preserveRatio="true"/>-->
+<!--        </ScrollPane>-->
+<!--    </center>-->
+    <center>
+        <ScrollPane fx:id="scrollPane" fitToWidth="true" fitToHeight="true">
+            <VBox fx:id="multiPageContainer" spacing="20" alignment="TOP_CENTER"/>
+        </ScrollPane>
+    </center>
+
+</BorderPane>
