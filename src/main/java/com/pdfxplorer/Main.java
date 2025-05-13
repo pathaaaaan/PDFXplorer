@@ -17,8 +17,13 @@ public class Main extends Application {
         scene.setOnKeyPressed(event -> {
             if (event.isControlDown() || event.isMetaDown()) {
                 switch (event.getCode()) {
-                    case PLUS, EQUALS -> controller.zoomInFromShortcut();
-                    case MINUS -> controller.zoomOutFromShortcut();
+                    case PLUS:
+                    case EQUALS:
+                        controller.zoomInFromShortcut();
+                        break;
+                    case MINUS:
+                        controller.zoomOutFromShortcut();
+                        break;
                 }
             }
         });
