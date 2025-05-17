@@ -1,0 +1,274 @@
+.root {
+  -fx-background-color: #f4f4f4;
+  -fx-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+}
+
+.root.dark-mode {
+  -fx-background-color: #2b2b2b;
+}
+
+.tool-bar {
+  -fx-background-color: linear-gradient(to bottom, #f6f6f6, #e9e9e9);
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 1, 0, 0, 1);
+  -fx-padding: 4 8;
+  -fx-spacing: 4;
+}
+
+.dark-mode .tool-bar {
+  -fx-background-color: linear-gradient(to bottom, #3c3f41, #323232);
+}
+
+.tool-bar-secondary {
+  -fx-background-color: #f8f8f8;
+  -fx-padding: 5;
+  -fx-spacing: 5;
+}
+
+.dark-mode .tool-bar-secondary {
+  -fx-background-color: #323232;
+}
+
+.action-button,
+.nav-button,
+.zoom-button,
+.rotate-button {
+  -fx-min-width: 30px;
+  -fx-min-height: 30px;
+  -fx-background-radius: 4;
+}
+
+.theme-toggle {
+  -fx-min-width: 30px;
+  -fx-min-height: 30px;
+  -fx-background-radius: 15;
+}
+
+.view-toggle {
+  -fx-min-width: 30px;
+  -fx-min-height: 30px;
+  -fx-background-radius: 4;
+}
+
+.page-number-field {
+  -fx-alignment: center;
+  -fx-max-width: 60px;
+}
+
+.sidebar {
+  -fx-background-color: #f0f0f0;
+  -fx-border-color: #e0e0e0;
+  -fx-border-width: 0 1 0 0;
+}
+
+.dark-mode .sidebar {
+  -fx-background-color: #2d2d2d;
+  -fx-border-color: #1d1d1d;
+}
+
+.thumbnail-container {
+  -fx-padding: 10;
+  -fx-alignment: center;
+  -fx-spacing: 10;
+}
+
+.thumbnail {
+  -fx-background-color: white;
+  -fx-border-color: #e0e0e0;
+  -fx-border-width: 1;
+  -fx-border-radius: 3;
+  -fx-padding: 5;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 2, 0, 0, 1);
+  -fx-cursor: hand;
+}
+
+.thumbnail:hover {
+  -fx-border-color: #0063cc;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0, 0, 2);
+}
+
+.thumbnail-selected {
+  -fx-border-color: #0063cc;
+  -fx-border-width: 2;
+  -fx-effect: dropshadow(gaussian, rgba(0, 99, 204, 0.3), 4, 0, 0, 2);
+}
+
+.thumbnail-label {
+  -fx-font-size: 11px;
+  -fx-text-fill: #666666;
+  -fx-alignment: center;
+}
+
+.dark-mode .thumbnail {
+  -fx-border-color: #444444;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 4, 0, 0, 2);
+}
+
+.dark-mode .thumbnail:hover {
+  -fx-border-color: #4a90e2;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 8, 0, 0, 4);
+}
+
+.dark-mode .thumbnail-label {
+  -fx-background-color: rgba(45, 45, 45, 0.9);
+  -fx-text-fill: #cccccc;
+}
+
+.thumbnail-scroll {
+  -fx-background: transparent;
+  -fx-background-color: transparent;
+}
+
+.outline-tree,
+.bookmark-list {
+  -fx-background-color: transparent;
+}
+
+.status-bar {
+  -fx-background-color: linear-gradient(to bottom, #f6f6f6, #e9e9e9);
+  -fx-border-color: #d0d0d0;
+  -fx-border-width: 1 0 0 0;
+  -fx-padding: 4 8;
+}
+
+.dark-mode .status-bar {
+  -fx-background-color: linear-gradient(to bottom, #3c3f41, #323232);
+  -fx-border-color: #1d1d1d;
+}
+
+.search-highlight {
+  -fx-fill: #ffeb3b80;
+  -fx-stroke: #fdd835;
+  -fx-stroke-width: 1;
+}
+
+.dark-mode .search-highlight {
+  -fx-fill: #ffd54f80;
+  -fx-stroke: #ffb300;
+}
+
+/* Text colors for dark mode */
+.dark-mode .label,
+.dark-mode .button,
+.dark-mode .toggle-button,
+.dark-mode .menu-bar,
+.dark-mode .menu,
+.dark-mode .menu-item {
+  -fx-text-fill: #ffffff;
+}
+
+/* Scrollbar styling */
+.scroll-pane {
+  -fx-background-color: transparent;
+  -fx-background: transparent;
+  -fx-padding: 0;
+}
+
+.scroll-pane > .viewport {
+  -fx-background-color: #e8e8e8;
+}
+
+.dark-mode .scroll-pane > .viewport {
+  -fx-background-color: #1e1e1e;
+}
+
+.scroll-bar:vertical {
+  -fx-background-color: transparent;
+  -fx-pref-width: 14;
+  -fx-padding: 0 4;
+}
+
+.scroll-bar:horizontal {
+  -fx-background-color: transparent;
+  -fx-pref-height: 14;
+  -fx-padding: 4 0;
+}
+
+.scroll-bar > .thumb {
+  -fx-background-color: #c1c1c1;
+  -fx-background-radius: 7;
+  -fx-opacity: 0.7;
+}
+
+.scroll-bar > .thumb:hover {
+  -fx-opacity: 0.9;
+}
+
+.scroll-bar > .track {
+  -fx-background-color: transparent;
+}
+
+/* File info styling */
+.file-info {
+  -fx-spacing: 10;
+  -fx-padding: 10;
+}
+
+.file-info .label {
+  -fx-text-fill: #333333;
+}
+
+.file-info .separator {
+  -fx-opacity: 0.5;
+}
+
+/* Status bar styling */
+.status-bar .label {
+  -fx-text-fill: #666666;
+  -fx-font-size: 11px;
+}
+
+/* Tab styling */
+.tab-pane {
+  -fx-tab-min-height: 28px;
+}
+
+.tab-pane .tab-header-area {
+  -fx-padding: 0;
+}
+
+.tab-pane .tab {
+  -fx-background-color: transparent;
+  -fx-background-radius: 0;
+  -fx-border-width: 0 0 2 0;
+  -fx-border-color: transparent;
+}
+
+.tab-pane .tab:selected {
+  -fx-border-color: #0063cc;
+}
+
+.tab-pane .tab-label {
+  -fx-text-fill: #666666;
+  -fx-font-size: 12px;
+}
+
+.tab-pane .tab:selected .tab-label {
+  -fx-text-fill: #0063cc;
+}
+
+/* Recent files list styling */
+.list-view {
+  -fx-background-color: transparent;
+  -fx-border-color: #e0e0e0;
+  -fx-border-radius: 3;
+}
+
+.list-cell {
+  -fx-background-color: transparent;
+  -fx-padding: 6 8;
+}
+
+.list-cell:hover {
+  -fx-background-color: rgba(0, 99, 204, 0.1);
+}
+
+.list-cell:selected {
+  -fx-background-color: #0063cc;
+  -fx-text-fill: white;
+}
+
+/* Progress indicator styling */
+.progress-indicator {
+  -fx-progress-color: #0063cc;
+}

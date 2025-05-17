@@ -3,27 +3,168 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.pdfxplorer.controller.MainController">
+            fx:controller="com.pdfxplorer.controller.MainController"
+            styleClass="root">
 
     <top>
-        <ToolBar>
-            <Button fx:id="openButton" text="Open PDF"/>
-            <TextField fx:id="searchField" promptText="Search..." />
-            <Button fx:id="searchButton" text="Search"/>
-            <Button fx:id="zoomInButton" text="Zoom In" />
-            <Button fx:id="zoomOutButton" text="Zoom Out" />
-            <ToggleButton fx:id="darkModeToggle" text="🌙 Dark Mode"/>
-        </ToolBar>
+        <VBox spacing="0">
+            <!-- Menu Bar -->
+            <MenuBar>
+                <Menu text="File">
+                    <MenuItem text="Open..." onAction="#handleOpenPdf"/>
+                    <Menu fx:id="recentFilesMenu" text="Recent Files"/>
+                    <SeparatorMenuItem/>
+                    <MenuItem fx:id="printMenuItem" text="Print..." onAction="#handlePrint"/>
+                    <SeparatorMenuItem/>
+                    <MenuItem fx:id="propertiesMenuItem" text="Properties" onAction="#showDocumentProperties"/>
+                </Menu>
+            </MenuBar>
+
+            <!-- Main Toolbar -->
+            <ToolBar fx:id="toolBar" styleClass="tool-bar">
+                <Button fx:id="openButton" text="Open PDF" styleClass="action-button">
+                    <tooltip>
+                        <Tooltip text="Open a PDF file"/>
+                    </tooltip>
+                </Button>
+                <Separator orientation="VERTICAL"/>
+                <TextField fx:id="searchField" promptText="Search..." prefWidth="200"/>
+                <Button fx:id="searchButton" text="Search" styleClass="action-button">
+                    <tooltip>
+                        <Tooltip text="Search in PDF"/>
+                    </tooltip>
+                </Button>
+                <CheckBox fx:id="caseSensitiveCheckBox" text="Case Sensitive"/>
+                <CheckBox fx:id="wholeWordCheckBox" text="Whole Word"/>
+                <Separator orientation="VERTICAL"/>
+                <Button fx:id="copyButton" text="Copy" styleClass="action-button">
+                    <tooltip>
+                        <Tooltip text="Copy Selected Text"/>
+                    </tooltip>
+                </Button>
+                <Button fx:id="extractTextButton" text="Extract Text" styleClass="action-button">
+                    <tooltip>
+                        <Tooltip text="Save Selected Text"/>
+                    </tooltip>
+                </Button>
+                <Separator orientation="VERTICAL"/>
+                <Button fx:id="zoomInButton" text="+" styleClass="zoom-button">
+                    <tooltip>
+                        <Tooltip text="Zoom In (Ctrl/Cmd +)"/>
+                    </tooltip>
+                </Button>
+                <Button fx:id="zoomOutButton" text="-" styleClass="zoom-button">
+                    <tooltip>
+                        <Tooltip text="Zoom Out (Ctrl/Cmd -)"/>
+                    </tooltip>
+                </Button>
+                <ComboBox fx:id="zoomLevelComboBox" prefWidth="100" editable="true">
+                    <tooltip>
+                        <Tooltip text="Select Zoom Level"/>
+                    </tooltip>
+                </ComboBox>
+                <Separator orientation="VERTICAL"/>
+                <Button fx:id="rotateLeftButton" text="↺" styleClass="rotate-button" onAction="#rotateLeft">
+                    <tooltip>
+                        <Tooltip text="Rotate Left"/>
+                    </tooltip>
+                </Button>
+                <Button fx:id="rotateRightButton" text="↻" styleClass="rotate-button" onAction="#rotateRight">
+                    <tooltip>
+                        <Tooltip text="Rotate Right"/>
+                    </tooltip>
+                </Button>
+                <Separator orientation="VERTICAL"/>
+                <ToggleButton fx:id="sidebarToggle" text="☰" styleClass="theme-toggle">
+                    <tooltip>
+                        <Tooltip text="Toggle Sidebar"/>
+                    </tooltip>
+                </ToggleButton>
+                <Region HBox.hgrow="ALWAYS"/> <!-- Spacer -->
+                <ToggleButton fx:id="darkModeToggle" text="🌙" styleClass="theme-toggle">
+                    <tooltip>
+                        <Tooltip text="Toggle Dark Mode"/>
+                    </tooltip>
+                </ToggleButton>
+            </ToolBar>
+
+            <!-- Page Navigation Toolbar -->
+            <ToolBar styleClass="tool-bar-secondary">
+                <Button fx:id="firstPageButton" text="⇤" styleClass="nav-button">
+                    <tooltip>
+                        <Tooltip text="First Page"/>
+                    </tooltip>
+                </Button>
+                <Button fx:id="prevPageButton" text="←" styleClass="nav-button">
+                    <tooltip>
+                        <Tooltip text="Previous Page"/>
+                    </tooltip>
+                </Button>
+                <TextField fx:id="pageNumberField" prefWidth="60" styleClass="page-number-field"/>
+                <Label fx:id="pageSeparatorLabel" text=" / "/>
+                <Label fx:id="totalPagesLabel" text="0"/>
+                <Button fx:id="nextPageButton" text="→" styleClass="nav-button">
+                    <tooltip>
+                        <Tooltip text="Next Page"/>
+                    </tooltip>
+                </Button>
+                <Button fx:id="lastPageButton" text="⇥" styleClass="nav-button">
+                    <tooltip>
+                        <Tooltip text="Last Page"/>
+                    </tooltip>
+                </Button>
+                <Separator orientation="VERTICAL"/>
+                <ToggleButton fx:id="fitWidthToggle" text="↔" styleClass="view-toggle">
+                    <tooltip>
+                        <Tooltip text="Fit to Width"/>
+                    </tooltip>
+                </ToggleButton>
+                <ToggleButton fx:id="fitPageToggle" text="↕" styleClass="view-toggle">
+                    <tooltip>
+                        <Tooltip text="Fit to Page"/>
+                    </tooltip>
+                </ToggleButton>
+            </ToolBar>
+        </VBox>
     </top>
 
+    <left>
+        <VBox fx:id="sidebarContainer" styleClass="sidebar" prefWidth="250" visible="false" managed="false">
+            <TabPane styleClass="sidebar-tabs" tabClosingPolicy="UNAVAILABLE">
+                <Tab text="Thumbnails">
+                    <ScrollPane fitToWidth="true" styleClass="thumbnail-scroll">
+                        <VBox fx:id="thumbnailContainer" styleClass="thumbnail-container" spacing="10"/>
+                    </ScrollPane>
+                </Tab>
+                <Tab text="Outline">
+                    <TreeView fx:id="outlineTreeView" styleClass="outline-tree"/>
+                </Tab>
+                <Tab text="Bookmarks">
+                    <ListView fx:id="bookmarkListView" styleClass="bookmark-list"/>
+                </Tab>
+            </TabPane>
+        </VBox>
+    </left>
+
     <center>
-        <ScrollPane fx:id="scrollPane" fitToWidth="true" fitToHeight="true">
-            <StackPane fx:id="imageContainer">
-                <VBox fx:id="multiPageContainer" spacing="20" alignment="TOP_CENTER"/>
-            </StackPane>
-        </ScrollPane>
+        <StackPane fx:id="contentContainer" VBox.vgrow="ALWAYS">
+            <!-- ICEPdfViewer will be added here programmatically -->
+        </StackPane>
+        <ProgressIndicator fx:id="loadingIndicator" visible="false"/>
     </center>
+
+    <bottom>
+        <HBox fx:id="statusBar" styleClass="status-bar" spacing="10" alignment="CENTER_LEFT">
+            <padding>
+                <Insets top="5" right="10" bottom="5" left="10"/>
+            </padding>
+            <Label fx:id="pageInfoLabel" text="Page: 0 / 0"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="zoomLabel" text="Zoom: 100%"/>
+        </HBox>
+    </bottom>
 
 </BorderPane>

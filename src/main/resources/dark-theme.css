@@ -1,165 +1,409 @@
 /* Base styles */
 .root {
-    -fx-font-family: 'Segoe UI', Arial, sans-serif;
-    -fx-font-size: 13px;
-    -fx-background-color: #f5f5f5;
+  -fx-font-family: "Segoe UI", Arial, sans-serif;
+  -fx-font-size: 13px;
+  -fx-background-color: #ffffff;
 }
 
 /* Light theme */
-.button {
-    -fx-background-color: #e3e3e3;
-    -fx-text-fill: #333333;
-    -fx-background-radius: 4px;
-    -fx-border-radius: 4px;
-    -fx-padding: 5px 10px;
+.action-button,
+.zoom-button,
+.theme-toggle,
+.nav-button,
+.view-toggle,
+.rotate-button {
+  -fx-background-color: transparent;
+  -fx-text-fill: #333333;
+  -fx-padding: 5px 10px;
+  -fx-cursor: hand;
+  -fx-min-width: 32px;
+  -fx-min-height: 32px;
 }
 
-.button:hover {
-    -fx-background-color: #d0d0d0;
+.action-button:hover,
+.zoom-button:hover,
+.theme-toggle:hover,
+.nav-button:hover,
+.view-toggle:hover,
+.rotate-button:hover {
+  -fx-background-color: #f0f0f0;
 }
 
-.button:pressed {
-    -fx-background-color: #c0c0c0;
+.action-button:pressed,
+.zoom-button:pressed,
+.nav-button:pressed,
+.rotate-button:pressed {
+  -fx-background-color: #e0e0e0;
 }
 
-.toggle-button {
-    -fx-background-color: #e3e3e3;
-    -fx-text-fill: #333333;
-    -fx-background-radius: 4px;
-    -fx-border-radius: 4px;
-    -fx-padding: 5px 10px;
+.zoom-button {
+  -fx-padding: 6px 10px;
+  -fx-font-weight: bold;
 }
 
-.toggle-button:hover {
-    -fx-background-color: #d0d0d0;
+.theme-toggle,
+.view-toggle {
+  -fx-padding: 6px 10px;
 }
 
-.toggle-button:selected {
-    -fx-background-color: #4f8fc0;
-    -fx-text-fill: white;
+.theme-toggle:selected,
+.view-toggle:selected {
+  -fx-background-color: #4f8fc0;
+  -fx-text-fill: white;
+  -fx-border-color: #4f8fc0;
 }
 
-.text-field {
-    -fx-background-color: white;
-    -fx-border-color: #cccccc;
-    -fx-border-radius: 4px;
-    -fx-background-radius: 4px;
-    -fx-padding: 5px 8px;
+.nav-button {
+  -fx-padding: 6px 8px;
+  -fx-font-size: 14px;
 }
 
-.text-field:focused {
-    -fx-border-color: #4f8fc0;
+.text-field,
+.combo-box {
+  -fx-background-color: white;
+  -fx-border-color: #e0e0e0;
+  -fx-border-radius: 4px;
+  -fx-background-radius: 4px;
+  -fx-padding: 6px 12px;
+}
+
+.text-field:focused,
+.combo-box:focused {
+  -fx-border-color: #4f8fc0;
+  -fx-background-color: white;
+}
+
+.page-number-field {
+  -fx-alignment: center;
+  -fx-max-width: 60px;
+  -fx-background-color: #333333;
+  -fx-text-fill: white;
 }
 
 .tool-bar {
-    -fx-background-color: #ffffff;
-    -fx-border-color: #e0e0e0;
-    -fx-border-width: 0 0 1 0;
-    -fx-spacing: 8px;
-    -fx-padding: 10px;
+  -fx-background-color: #f8f9fa;
+  -fx-border-color: #e0e0e0;
+  -fx-border-width: 0 0 1 0;
+  -fx-spacing: 5px;
+  -fx-padding: 5px;
 }
 
+.tool-bar-secondary {
+  -fx-background-color: #ffffff;
+  -fx-border-color: #e0e0e0;
+  -fx-border-width: 0 0 1 0;
+  -fx-spacing: 5px;
+  -fx-padding: 5px;
+}
+
+/* Sidebar styles */
+.sidebar {
+  -fx-background-color: #2b2b2b;
+  -fx-border-color: #3c3c3c;
+  -fx-border-width: 0 1 0 0;
+}
+
+.sidebar-tabs {
+  -fx-background-color: #2b2b2b;
+}
+
+.sidebar-tabs .tab-header-area {
+  -fx-padding: 0;
+}
+
+.sidebar-tabs .tab {
+  -fx-background-color: #333333;
+  -fx-background-radius: 0;
+  -fx-border-width: 0 0 2 0;
+  -fx-border-color: transparent;
+  -fx-padding: 8px 16px;
+}
+
+.sidebar-tabs .tab:selected {
+  -fx-border-color: #4c4c4c;
+}
+
+.thumbnail-container {
+  -fx-padding: 10px;
+  -fx-background-color: #2b2b2b;
+}
+
+.thumbnail-scroll {
+  -fx-background-color: #2b2b2b;
+  -fx-padding: 0;
+}
+
+.outline-tree,
+.bookmark-list {
+  -fx-background-color: #2b2b2b;
+  -fx-border-width: 0;
+}
+
+/* Scroll Pane */
 .scroll-pane {
-    -fx-background-color: transparent;
-    -fx-background: transparent;
-    -fx-border-color: transparent;
+  -fx-background-color: transparent;
+  -fx-background: transparent;
+  -fx-border-color: transparent;
 }
 
 .scroll-pane > .viewport {
-    -fx-background-color: transparent;
+  -fx-background-color: transparent;
 }
 
 .scroll-bar:vertical {
-    -fx-background-color: transparent;
-    -fx-pref-width: 12px;
+  -fx-background-color: transparent;
+  -fx-pref-width: 12px;
 }
 
 .scroll-bar:horizontal {
-    -fx-background-color: transparent;
-    -fx-pref-height: 12px;
+  -fx-background-color: transparent;
+  -fx-pref-height: 12px;
 }
 
 .scroll-bar > .thumb {
-    -fx-background-color: #c0c0c0;
-    -fx-background-radius: 6px;
+  -fx-background-color: #c0c0c0;
+  -fx-background-radius: 6px;
 }
 
 .scroll-bar > .thumb:hover {
-    -fx-background-color: #a0a0a0;
+  -fx-background-color: #a0a0a0;
 }
 
 .scroll-bar > .track {
-    -fx-background-color: transparent;
+  -fx-background-color: transparent;
 }
 
-/* Dark theme styles */
-.root.dark-mode {
-    -fx-base: #2b2b2b;
-    -fx-background: #1e1e1e;
-    -fx-control-inner-background: #3c3f41;
-    -fx-text-fill: #ffffff;
-    -fx-accent: #4a90e2;
+.separator:vertical .line {
+  -fx-border-color: #e0e0e0;
+  -fx-border-width: 0 1 0 0;
+  -fx-padding: 0 2 0 2;
 }
 
-.dark-mode .button {
-    -fx-background-color: #444;
-    -fx-text-fill: white;
-}
-
-.dark-mode .button:hover {
-    -fx-background-color: #555;
-}
-
-.dark-mode .button:pressed {
-    -fx-background-color: #666;
-}
-
-.dark-mode .toggle-button {
-    -fx-background-color: #444;
-    -fx-text-fill: white;
-}
-
-.dark-mode .toggle-button:hover {
-    -fx-background-color: #555;
-}
-
-.dark-mode .toggle-button:selected {
-    -fx-background-color: #4a90e2;
-    -fx-text-fill: white;
-}
-
-.dark-mode .text-field {
-    -fx-background-color: #333;
-    -fx-text-fill: white;
-    -fx-border-color: #555;
-}
-
-.dark-mode .text-field:focused {
-    -fx-border-color: #4a90e2;
-}
-
-.dark-mode .tool-bar {
-    -fx-background-color: #2d2d2d;
-    -fx-border-color: #444;
-}
-
-.dark-mode .scroll-bar > .thumb {
-    -fx-background-color: #555;
-}
-
-.dark-mode .scroll-bar > .thumb:hover {
-    -fx-background-color: #666;
+/* Progress Indicator */
+.progress-indicator {
+  -fx-progress-color: #4f8fc0;
 }
 
 /* Status bar */
 .status-bar {
-    -fx-background-color: #f0f0f0;
-    -fx-padding: 5px 10px;
-    -fx-border-color: #e0e0e0;
-    -fx-border-width: 1 0 0 0;
+  -fx-background-color: #2b2b2b;
+  -fx-border-color: #e0e0e0;
+  -fx-border-width: 1 0 0 0;
+  -fx-text-fill: white;
+}
+
+.status-bar .label {
+  -fx-text-fill: #666666;
+}
+
+/* Dark theme styles */
+.root.dark-mode {
+  -fx-background-color: #1e1e1e;
+}
+
+.dark-mode .action-button,
+.dark-mode .zoom-button,
+.dark-mode .theme-toggle,
+.dark-mode .nav-button,
+.dark-mode .view-toggle,
+.dark-mode .rotate-button {
+  -fx-background-color: transparent;
+  -fx-text-fill: white;
+}
+
+.dark-mode .action-button:hover,
+.dark-mode .zoom-button:hover,
+.dark-mode .theme-toggle:hover,
+.dark-mode .nav-button:hover,
+.dark-mode .view-toggle:hover,
+.dark-mode .rotate-button:hover {
+  -fx-background-color: #4c4c4c;
+}
+
+.dark-mode .action-button:pressed,
+.dark-mode .zoom-button:pressed,
+.dark-mode .nav-button:pressed,
+.dark-mode .rotate-button:pressed {
+  -fx-background-color: #2d2d2d;
+}
+
+.dark-mode .theme-toggle:selected,
+.dark-mode .view-toggle:selected {
+  -fx-background-color: #4a90e2;
+  -fx-text-fill: white;
+  -fx-border-color: #4a90e2;
+}
+
+.dark-mode .text-field,
+.dark-mode .combo-box {
+  -fx-background-color: #333333;
+  -fx-text-fill: white;
+  -fx-border-color: #444444;
+}
+
+.dark-mode .text-field:focused,
+.dark-mode .combo-box:focused {
+  -fx-border-color: #4a90e2;
+}
+
+.dark-mode .tool-bar {
+  -fx-background-color: #2b2b2b;
+  -fx-border-color: #3c3c3c;
+}
+
+.dark-mode .tool-bar-secondary {
+  -fx-background-color: #333333;
+  -fx-border-color: #3c3c3c;
+}
+
+.dark-mode .sidebar {
+  -fx-background-color: #2d2d2d;
+  -fx-border-color: #444444;
+}
+
+.dark-mode .sidebar-tabs .tab {
+  -fx-background-color: #333333;
+  -fx-text-fill: white;
+}
+
+.dark-mode .sidebar-tabs .tab:selected {
+  -fx-background-color: #4c4c4c;
+}
+
+.dark-mode .outline-tree,
+.dark-mode .bookmark-list {
+  -fx-background-color: #2d2d2d;
+}
+
+.dark-mode .scroll-bar > .thumb {
+  -fx-background-color: #555555;
+}
+
+.dark-mode .scroll-bar > .thumb:hover {
+  -fx-background-color: #666666;
+}
+
+.dark-mode .separator:vertical .line {
+  -fx-border-color: #444444;
 }
 
 .dark-mode .status-bar {
-    -fx-background-color: #2d2d2d;
-    -fx-border-color: #444;
+  -fx-background-color: #2b2b2b;
+  -fx-text-fill: white;
+}
+
+.dark-mode .status-bar .label {
+  -fx-text-fill: #cccccc;
+}
+
+.dark-mode .progress-indicator {
+  -fx-progress-color: #4a90e2;
+}
+
+/* Menu Bar styles */
+.menu-bar {
+  -fx-background-color: #f5f5f5;
+}
+
+.menu-bar .menu {
+  -fx-padding: 3px 8px;
+}
+
+.menu-bar .menu-item {
+  -fx-text-fill: #333333;
+}
+
+.menu-bar .menu .label {
+  -fx-text-fill: #333333;
+}
+
+.menu-bar .menu:hover,
+.menu-bar .menu:showing {
+  -fx-background-color: #e0e0e0;
+}
+
+.menu-bar .menu-item:focused {
+  -fx-background-color: #e8e8e8;
+}
+
+.context-menu {
+  -fx-background-color: #ffffff;
+  -fx-border-color: #e0e0e0;
+}
+
+/* Dialog styles */
+.dialog-pane {
+  -fx-background-color: #ffffff;
+}
+
+.dialog-pane .header-panel {
+  -fx-background-color: #f8f9fa;
+}
+
+.dialog-pane .header-panel .label {
+  -fx-text-fill: #333333;
+}
+
+.dialog-pane .content {
+  -fx-text-fill: #333333;
+}
+
+.dialog-pane .button {
+  -fx-background-color: #f8f9fa;
+  -fx-text-fill: #333333;
+}
+
+.dialog-pane .button:hover {
+  -fx-background-color: #e9ecef;
+}
+
+.dialog-pane > .content.label {
+  -fx-text-fill: white;
+  -fx-font-size: 13px;
+}
+
+/* Rotate buttons */
+.rotate-button {
+  -fx-background-radius: 16px;
+  -fx-font-size: 16px;
+  -fx-padding: 6px;
+}
+
+/* Text Selection */
+.text-selection {
+  -fx-fill: rgba(51, 153, 255, 0.3);
+  -fx-stroke: #3399ff;
+  -fx-stroke-width: 1;
+}
+
+.dark-mode .text-selection {
+  -fx-fill: rgba(51, 153, 255, 0.4);
+  -fx-stroke: #4a90e2;
+}
+
+/* Search Highlights */
+.search-highlight {
+  -fx-fill: rgba(255, 255, 0, 0.4);
+  -fx-stroke: #ffd700;
+  -fx-stroke-width: 1;
+}
+
+.dark-mode .search-highlight {
+  -fx-fill: rgba(255, 215, 0, 0.4);
+  -fx-stroke: #daa520;
+}
+
+/* Text Operations Toolbar */
+.text-operations {
+  -fx-spacing: 5px;
+  -fx-padding: 5px;
+}
+
+.text-operations .button,
+.text-operations .check-box {
+  -fx-padding: 5px 10px;
+}
+
+.dark-mode .text-operations {
+  -fx-background-color: #333333;
 }

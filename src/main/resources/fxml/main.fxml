@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.pdfxplorer.controller.MainController"
+      style="-fx-background-color: #f4f4f4;">
+
+    <top>
+        <VBox spacing="10">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Button fx:id="openButton" text="Open PDF"/>
+                <Separator orientation="VERTICAL"/>
+                <Button fx:id="prevPageButton" text="Previous"/>
+                <Button fx:id="nextPageButton" text="Next"/>
+                <Separator orientation="VERTICAL"/>
+                <ComboBox fx:id="zoomLevelComboBox" prefWidth="100"/>
+                <ToggleButton fx:id="fitWidthToggle" text="Fit Width"/>
+                <ToggleButton fx:id="fitPageToggle" text="Fit Page"/>
+                <Separator orientation="VERTICAL"/>
+                <Button fx:id="rotateLeftButton" text="Rotate Left"/>
+                <Button fx:id="rotateRightButton" text="Rotate Right"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="pageInfoLabel" text="Page: - / -"/>
+                <Label fx:id="zoomLabel" text="Zoom: 100%"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <left>
+        <TabPane fx:id="sidebarTabPane" prefWidth="200" tabClosingPolicy="UNAVAILABLE">
+            <Tab text="Thumbnails">
+                <ScrollPane fitToWidth="true">
+                    <VBox fx:id="thumbnailContainer" spacing="10" style="-fx-padding: 10;">
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+            <Tab text="File Info">
+                <ScrollPane fitToWidth="true">
+                    <VBox spacing="10" style="-fx-padding: 10;">
+                        <Label text="Document Information" style="-fx-font-weight: bold;"/>
+                        <GridPane vgap="5" hgap="5">
+                            <Label text="File:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <Label fx:id="fileNameLabel" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                            
+                            <Label text="Pages:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <Label fx:id="pageSizeLabel" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                            
+                            <Label text="Size:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <Label fx:id="fileSizeLabel" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                            
+                            <Label text="Created:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                            <Label fx:id="createdDateLabel" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                            
+                            <Label text="Modified:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                            <Label fx:id="modifiedDateLabel" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                        </GridPane>
+                        
+                        <Separator/>
+                        
+                        <Label text="Recent Files" style="-fx-font-weight: bold;"/>
+                        <ListView fx:id="recentFilesListView" VBox.vgrow="ALWAYS" prefHeight="200"/>
+                    </VBox>
+                </ScrollPane>
+            </Tab>
+        </TabPane>
+    </left>
+
+    <center>
+        <StackPane fx:id="contentContainer">
+            <ScrollPane fx:id="scrollPane" VBox.vgrow="ALWAYS" fitToWidth="true">
+                <VBox fx:id="pdfContainer" alignment="CENTER">
+                    <ImageView fx:id="pdfImageView" preserveRatio="true" smooth="true"/>
+                </VBox>
+            </ScrollPane>
+            <ProgressIndicator fx:id="loadingIndicator" visible="false"/>
+        </StackPane>
+    </center>
+
+</BorderPane> 
