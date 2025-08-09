@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Viewer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <style>
+        :root {
+            --bs-body-bg: #f8f9fa;
+            --bs-body-color: #212529;
+        }
+        
+        [data-bs-theme="dark"] {
+            --bs-body-bg: #212529;
+            --bs-body-color: #f8f9fa;
+        }
+        
+        .pdf-container {
+            height: calc(100vh - 56px);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .sidebar {
+            height: 100%;
+            overflow-y: auto;
+            border-right: 1px solid var(--bs-border-color);
+        }
+        
+        .viewer {
+            height: 100%;
+            overflow: auto;
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        
+        [data-bs-theme="dark"] .viewer {
+            background-color: #2c3034;
+        }
+        
+        #pdfCanvas {
+            max-width: 100%;
+            max-height: none;
+            width: auto;
+            height: auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            background: white;
+        }
+        
+        /* Text layer removed to disable text selection */
+        .textLayer {
+            display: none !important;
+        }
+        
+        /* Enhanced text selection styles */
+        .textLayer ::selection {
+            background: rgba(0, 119, 255, 0.4) !important;
+            color: transparent;
+            text-shadow: none;
+        }
+        
+        .textLayer::selection {
+            background: rgba(0, 119, 255, 0.4);
+            color: transparent;
+            text-shadow: none;
+        }
+        
+        /* Improve selection of individual characters */
+        .textLayer span::selection {
+            background: rgba(0, 119, 255, 0.4) !important;
+            color: transparent !important;
+            text-shadow: none !important;
+        }
+        
+        .file-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .file-item {
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--bs-border-color);
+            cursor: pointer;
+        }
+        
+        .file-item:hover {
+            background-color: var(--bs-gray-200);
+        }
+        
+        [data-bs-theme="dark"] .file-item:hover {
+            background-color: var(--bs-gray-700);
+        }
+        
+        .drop-zone {
+            border: 2px dashed var(--bs-border-color);
+            border-radius: 0.5rem;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .drop-zone:hover {
+            border-color: var(--bs-primary);
+        }
+        
+        .controls {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            z-index: 1000;
+        }
+
+        .page-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            font-size: 24px;
+        }
+
+        [data-bs-theme="dark"] .page-nav {
+            background: rgba(33, 37, 41, 0.9);
+            color: white;
+        }
+
+        .page-nav:hover {
+            background: var(--bs-primary);
+            color: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .page-nav.prev {
+            left: 2rem;
+        }
+
+        .page-nav.next {
+            right: 2rem;
+        }
+
+        .page-nav:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: rgba(128, 128, 128, 0.5);
+        }
+
+        .page-nav:disabled:hover {
+            transform: translateY(-50%);
+            background: rgba(128, 128, 128, 0.5);
+            color: inherit;
+        }
+
+        .color-picker {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 10px;
+        }
+        
+        .color-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .color-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .color-btn.active {
+            border-color: #000;
+            transform: scale(1.1);
+        }
+        
+        .annotation-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+        
+        .annotation {
+            position: absolute;
+            pointer-events: all;
+        }
+        
+        .highlight {
+            background-color: rgba(255, 235, 59, 0.3);
+            cursor: pointer;
+        }
+        
+        .text-note {
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 5px;
+            border-radius: 4px;
+            cursor: move;
+        }
+        
+        .shape {
+            border: 2px solid currentColor;
+            position: absolute;
+        }
+        
+        .rectangle {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .circle {
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .weak-word {
+            background-color: rgba(255, 193, 7, 0.3);
+            cursor: pointer;
+        }
+        
+        .weak-word:hover {
+            background-color: rgba(255, 193, 7, 0.5);
+        }
+        
+        .word-analysis-tooltip {
+            position: absolute;
+            background-color: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div id="messageBox" class="alert d-none" role="alert"></div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-file-pdf me-2"></i>PDF Viewer
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item dropdown">
+                        <button class="btn btn-outline-light dropdown-toggle" type="button" id="viewDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-eye"></i> View
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="viewDropdown">
+                            <li><button class="dropdown-item" id="fitWidth">
+                                <i class="bi bi-arrows-angle-expand"></i> Fit Width
+                            </button></li>
+                            <li><button class="dropdown-item" id="fitHeight">
+                                <i class="bi bi-arrows-angle-expand"></i> Fit Height
+                            </button></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><button class="dropdown-item" id="zoomReset">
+                                <i class="bi bi-arrows-angle-contract"></i> Reset Zoom
+                            </button></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <button class="btn btn-outline-light dropdown-toggle" type="button" id="rotateDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-arrow-repeat"></i> Rotate
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="rotateDropdown">
+                            <li><button class="dropdown-item" id="rotateLeft">
+                                <i class="bi bi-arrow-counterclockwise"></i> Rotate Left
+                            </button></li>
+                            <li><button class="dropdown-item" id="rotateRight">
+                                <i class="bi bi-arrow-clockwise"></i> Rotate Right
+                            </button></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <div class="btn-group">
+                            <button class="btn btn-outline-light" id="zoomOut" title="Zoom Out">
+                                <i class="bi bi-zoom-out"></i>
+                            </button>
+                            <button class="btn btn-outline-light" id="zoomIn" title="Zoom In">
+                                <i class="bi bi-zoom-in"></i>
+                            </button>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light" id="downloadPdf" title="Download PDF" disabled>
+                            <i class="bi bi-download"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light" id="printPdf" title="Print PDF" disabled>
+                            <i class="bi bi-printer"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light" id="fullscreen" title="Toggle Fullscreen">
+                            <i class="bi bi-fullscreen"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light" id="searchBtn" title="Search" disabled>
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <button class="btn btn-outline-light dropdown-toggle" type="button" id="annotationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-pencil"></i> Annotations
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="annotationDropdown">
+                            <li><button class="dropdown-item" id="highlightTool">
+                                <i class="bi bi-marker"></i> Highlight
+                            </button></li>
+                            <li><button class="dropdown-item" id="textTool">
+                                <i class="bi bi-chat-square-text"></i> Text Note
+                            </button></li>
+                            <li><button class="dropdown-item" id="rectangleTool">
+                                <i class="bi bi-square"></i> Rectangle
+                            </button></li>
+                            <li><button class="dropdown-item" id="circleTool">
+                                <i class="bi bi-circle"></i> Circle
+                            </button></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><button class="dropdown-item" id="clearAnnotations">
+                                <i class="bi bi-trash"></i> Clear All
+                            </button></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <button class="btn btn-outline-light dropdown-toggle" type="button" id="wordAnalysisDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-text-paragraph"></i> Word Analysis
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="wordAnalysisDropdown">
+                            <li><button class="dropdown-item" id="analyzeWords">
+                                <i class="bi bi-search"></i> Find Weak Words
+                            </button></li>
+                            <li><button class="dropdown-item" id="replaceWords">
+                                <i class="bi bi-arrow-repeat"></i> Replace Weak Words
+                            </button></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <button class="btn btn-outline-light" id="themeToggle">
+                            <i class="bi bi-moon-stars"></i>
+                            <span class="d-none d-md-inline">Toggle Theme</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Search Modal -->
+    <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="searchModalLabel">Search in PDF</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="searchText" class="form-label">Search for:</label>
+                        <input type="text" class="form-control" id="searchText" placeholder="Enter text to search">
+                    </div>
+                    <div class="mb-3">
+                        <label for="replaceText" class="form-label">Replace with:</label>
+                        <input type="text" class="form-control" id="replaceText" placeholder="Enter replacement text">
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="caseSensitive">
+                        <label class="form-check-label" for="caseSensitive">
+                            Case sensitive
+                        </label>
+                    </div>
+                    <div class="search-results">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span id="searchResultsCount">0 matches found</span>
+                            <div class="btn-group">
+                                <button class="btn btn-sm btn-outline-primary" id="prevMatch" disabled>
+                                    <i class="bi bi-chevron-up"></i> Previous
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary" id="nextMatch" disabled>
+                                    Next <i class="bi bi-chevron-down"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="searchResults" class="list-group">
+                            <!-- Search results will be populated here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="replaceBtn" disabled>Replace</button>
+                    <button type="button" class="btn btn-primary" id="replaceAllBtn" disabled>Replace All</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Annotation Color Picker Modal -->
+    <div class="modal fade" id="colorPickerModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Choose Color</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="color-picker">
+                        <button class="color-btn" data-color="#ffeb3b" style="background-color: #ffeb3b;"></button>
+                        <button class="color-btn" data-color="#ff9800" style="background-color: #ff9800;"></button>
+                        <button class="color-btn" data-color="#f44336" style="background-color: #f44336;"></button>
+                        <button class="color-btn" data-color="#4caf50" style="background-color: #4caf50;"></button>
+                        <button class="color-btn" data-color="#2196f3" style="background-color: #2196f3;"></button>
+                        <button class="color-btn" data-color="#9c27b0" style="background-color: #9c27b0;"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Word Analysis Modal -->
+    <div class="modal fade" id="wordAnalysisModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Word Analysis</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info" id="wordAnalysisStatus">
+                        Click "Find Weak Words" to analyze the current page.
+                    </div>
+                    <div id="wordAnalysisResults" class="d-none">
+                        <h6>Found <span id="weakWordCount">0</span> weak words:</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Weak Word</th>
+                                        <th>Strong Alternative</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="weakWordsList"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="replaceAllWords">Replace All Words</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid pdf-container">
+        <div class="row h-100">
+            <div class="col-md-3 sidebar p-0">
+                <div class="p-3">
+                    <div class="drop-zone mb-3" id="dropZone">
+                        <i class="bi bi-cloud-upload fs-1"></i>
+                        <p class="mt-2">Drag & Drop PDF files here<br>or click to browse</p>
+                        <input type="file" id="fileInput" accept=".pdf" class="d-none">
+                    </div>
+                </div>
+                <ul class="file-list" id="fileList"></ul>
+            </div>
+            <div class="col-md-9 viewer p-0">
+                <button class="page-nav prev" id="prevPage" disabled>
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+                <canvas id="pdfCanvas"></canvas>
+                <button class="page-nav next" id="nextPage" disabled>
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+        
+        function setTheme(isDark) {
+            document.documentElement.setAttribute('data-bs-theme', isDark ? 'dark' : 'light');
+            themeToggle.innerHTML = isDark ? '<i class="bi bi-sun"></i>' : '<i class="bi bi-moon-stars"></i>';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+        
+        setTheme(localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && prefersDark.matches));
+        
+        themeToggle.addEventListener('click', () => {
+            const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+            setTheme(!isDark);
+        });
+
+        // File handling
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+        const pdfCanvas = document.getElementById('pdfCanvas');
+        const prevPageBtn = document.getElementById('prevPage');
+        const nextPageBtn = document.getElementById('nextPage');
+        let currentZoom = 100;
+        let currentPage = 1;
+        let totalPages = 0;
+        let currentFile = null;
+        let pdfDoc = null;
+        let currentRotation = 0;
+        const downloadBtn = document.getElementById('downloadPdf');
+        const rotateLeftBtn = document.getElementById('rotateLeft');
+        const rotateRightBtn = document.getElementById('rotateRight');
+        const zoomResetBtn = document.getElementById('zoomReset');
+        const printBtn = document.getElementById('printPdf');
+        const fullscreenBtn = document.getElementById('fullscreen');
+        const fitWidthBtn = document.getElementById('fitWidth');
+        const fitHeightBtn = document.getElementById('fitHeight');
+        const searchBtn = document.getElementById('searchBtn');
+        const searchModal = new bootstrap.Modal(document.getElementById('searchModal'));
+        const searchText = document.getElementById('searchText');
+        const replaceText = document.getElementById('replaceText');
+        const caseSensitive = document.getElementById('caseSensitive');
+        const prevMatchBtn = document.getElementById('prevMatch');
+        const nextMatchBtn = document.getElementById('nextMatch');
+        const replaceBtn = document.getElementById('replaceBtn');
+        const replaceAllBtn = document.getElementById('replaceAllBtn');
+        const searchResults = document.getElementById('searchResults');
+        const searchResultsCount = document.getElementById('searchResultsCount');
+        
+        let searchMatches = [];
+        let currentMatchIndex = -1;
+
+        // Annotation state
+        let currentTool = null;
+        let currentColor = '#ffeb3b';
+        let annotations = new Map(); // Map of page number to annotations
+        let isDrawing = false;
+        let startX, startY;
+        let currentAnnotation = null;
+        
+        // Initialize annotation tools
+        const highlightTool = document.getElementById('highlightTool');
+        const textTool = document.getElementById('textTool');
+        const rectangleTool = document.getElementById('rectangleTool');
+        const circleTool = document.getElementById('circleTool');
+        const clearAnnotations = document.getElementById('clearAnnotations');
+        const colorPickerModal = new bootstrap.Modal(document.getElementById('colorPickerModal'));
+        
+        // Word Analysis
+        const wordAnalysisModal = new bootstrap.Modal(document.getElementById('wordAnalysisModal'));
+        const analyzeWordsBtn = document.getElementById('analyzeWords');
+        const replaceWordsBtn = document.getElementById('replaceWords');
+        const wordAnalysisResults = document.getElementById('wordAnalysisResults');
+        const weakWordsList = document.getElementById('weakWordsList');
+        const weakWordCount = document.getElementById('weakWordCount');
+        const replaceAllWordsBtn = document.getElementById('replaceAllWords');
+        const wordAnalysisStatus = document.getElementById('wordAnalysisStatus');
+        
+        let currentWeakWords = [];
+        function updatePageControls() {
+            prevPageBtn.disabled = currentPage <= 1;
+            nextPageBtn.disabled = currentPage >= totalPages;
+        }
+
+        async function renderPage(pageNum) {
+            try {
+                const page = await pdfDoc.getPage(pageNum);
+                
+                // Calculate the viewport with current zoom and rotation
+                const viewport = page.getViewport({ 
+                    scale: currentZoom / 100 * window.devicePixelRatio,
+                    rotation: currentRotation
+                });
+                
+                // Get canvas and context
+                const canvas = document.getElementById('pdfCanvas');
+                const context = canvas.getContext('2d');
+                
+                // Set canvas dimensions
+                const displayWidth = Math.floor(viewport.width);
+                const displayHeight = Math.floor(viewport.height);
+                
+                // Set canvas size
+                canvas.width = displayWidth;
+                canvas.height = displayHeight;
+                
+                // Set CSS size (scaled down by device pixel ratio)
+                canvas.style.width = (displayWidth / window.devicePixelRatio) + 'px';
+                canvas.style.height = 'auto';
+                
+                // Handle text layer
+                let textLayerDiv = document.querySelector('.textLayer');
+                if (textLayerDiv) {
+                    textLayerDiv.innerHTML = '';
+                } else {
+                    textLayerDiv = document.createElement('div');
+                    textLayerDiv.className = 'textLayer';
+                    document.querySelector('.viewer').appendChild(textLayerDiv);
+                }
+                
+                // Set text layer dimensions
+                textLayerDiv.style.width = displayWidth + 'px';
+                textLayerDiv.style.height = displayHeight + 'px';
+                textLayerDiv.style.left = '0';
+                textLayerDiv.style.top = '0';
+                
+                // Get text content for the page
+                const textContent = await page.getTextContent({
+                    normalizeWhitespace: true,
+                    disableCombineTextItems: false
+                });
+                
+                // Render the PDF page first
+                await page.render({
+                    canvasContext: context,
+                    viewport: viewport
+                }).promise;
+                
+                // Then render the text layer
+                await pdfjsLib.renderTextLayer({
+                    textContent: textContent,
+                    container: textLayerDiv,
+                    viewport: viewport,
+                    textDivs: []
+                }).promise;
+                
+                // Enable text selection
+                textLayerDiv.style.pointerEvents = 'auto';
+                
+                // Update current page and UI
+                currentPage = pageNum;
+                updatePageControls();
+                updateAnnotationLayer();
+                renderAnnotations();
+            } catch (error) {
+                console.error('Error rendering page:', error);
+            }
+        }
+
+        async function loadPdf(filename) {
+            try {
+                const response = await fetch(`/pdf/${filename}`);
+                const pdfData = await response.arrayBuffer();
+                pdfDoc = await pdfjsLib.getDocument({ data: pdfData }).promise;
+                totalPages = pdfDoc.numPages;
+                currentPage = 1;
+                currentRotation = 0;
+                updatePageControls();
+                renderPage(currentPage);
+                
+                // Enable controls
+                downloadBtn.disabled = false;
+                printBtn.disabled = false;
+                rotateLeftBtn.disabled = false;
+                rotateRightBtn.disabled = false;
+                searchBtn.disabled = false;
+                loadAnnotations();
+            } catch (error) {
+                console.error('Error loading PDF:', error);
+            }
+        }
+
+        function loadFileList() {
+            fetch('/list')
+                .then(response => response.json())
+                .then(files => {
+                    fileList.innerHTML = files.map(file => `
+                        <li class="file-item d-flex justify-content-between align-items-center" data-filename="${file.name}">
+                            <div>
+                                <i class="bi bi-file-pdf me-2"></i>
+                                ${file.name}
+                            </div>
+                            <button class="btn btn-sm btn-danger delete-file">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </li>
+                    `).join('');
+                });
+        }
+
+        function handleFileUpload(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/convert-and-upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    loadFileList();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Upload failed');
+            });
+        }
+
+        dropZone.addEventListener('click', () => fileInput.click());
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-primary');
+        });
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('border-primary');
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-primary');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type === 'application/pdf') {
+                handleFileUpload(file);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handleFileUpload(file);
+            }
+        });
+
+        fileList.addEventListener('click', (e) => {
+            const fileItem = e.target.closest('.file-item');
+            if (fileItem) {
+                if (e.target.closest('.delete-file')) {
+                    const filename = fileItem.dataset.filename;
+                    if (confirm('Are you sure you want to delete this file?')) {
+                        fetch(`/delete/${filename}`, { method: 'DELETE' })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.message) {
+                                    loadFileList();
+                                    if (currentFile === filename) {
+                                        currentFile = null;
+                                        pdfDoc = null;
+                                        totalPages = 0;
+                                        currentPage = 1;
+                                        updatePageControls();
+                                        pdfCanvas.getContext('2d').clearRect(0, 0, pdfCanvas.width, pdfCanvas.height);
+                                    }
+                                }
+                            });
+                    }
+                } else {
+                    const filename = fileItem.dataset.filename;
+                    currentFile = filename;
+                    loadPdf(filename);
+                    localStorage.setItem('lastViewed', filename);
+                }
+            }
+        });
+
+        // Page navigation controls
+        prevPageBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                renderPage(currentPage - 1);
+            }
+        });
+
+        nextPageBtn.addEventListener('click', () => {
+            if (currentPage < totalPages) {
+                renderPage(currentPage + 1);
+            }
+        });
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (currentFile) {
+                if (e.key === 'ArrowLeft' && currentPage > 1) {
+                    renderPage(currentPage - 1);
+                } else if (e.key === 'ArrowRight' && currentPage < totalPages) {
+                    renderPage(currentPage + 1);
+                }
+            }
+        });
+
+        // Download PDF
+        downloadBtn.addEventListener('click', async () => {
+            if (currentFile) {
+                try {
+                    const response = await fetch('/download-annotated', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            filename: currentFile,
+                            annotations: Array.from(annotations.entries())
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `annotated_${currentFile}`;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                    }
+                } catch (error) {
+                    console.error('Error downloading annotated PDF:', error);
+                    alert('Error downloading annotated PDF');
+                }
+            }
+        });
+
+        // Rotation controls
+        rotateLeftBtn.addEventListener('click', () => {
+            currentRotation = (currentRotation - 90) % 360;
+            renderPage(currentPage);
+        });
+
+        rotateRightBtn.addEventListener('click', () => {
+            currentRotation = (currentRotation + 90) % 360;
+            renderPage(currentPage);
+        });
+
+        // Reset zoom
+        zoomResetBtn.addEventListener('click', () => {
+            currentZoom = 100;
+            if (currentFile) {
+                renderPage(currentPage);
+            }
+        });
+
+        // Update zoom controls
+        document.getElementById('zoomIn').addEventListener('click', () => {
+            currentZoom = Math.min(200, currentZoom + 10);
+            if (currentFile) {
+                renderPage(currentPage);
+            }
+        });
+
+        document.getElementById('zoomOut').addEventListener('click', () => {
+            currentZoom = Math.max(50, currentZoom - 10);
+            if (currentFile) {
+                renderPage(currentPage);
+            }
+        });
+
+        // Add keyboard shortcuts for zoom
+        document.addEventListener('keydown', (e) => {
+            if (currentFile) {
+                if (e.key === '+' || e.key === '=') {
+                    currentZoom = Math.min(200, currentZoom + 10);
+                    renderPage(currentPage);
+                } else if (e.key === '-') {
+                    currentZoom = Math.max(50, currentZoom - 10);
+                    renderPage(currentPage);
+                } else if (e.key === '0') {
+                    currentZoom = 100;
+                    renderPage(currentPage);
+                } else if (e.key === 'f') {
+                    fullscreenBtn.click();
+                } else if (e.key === 'p' && !e.ctrlKey) {
+                    printBtn.click();
+                }
+            }
+        });
+
+        // Print PDF
+        printBtn.addEventListener('click', () => {
+            if (currentFile) {
+                const printWindow = window.open(`/pdf/${currentFile}`, '_blank');
+                printWindow.onload = function() {
+                    printWindow.print();
+                };
+            }
+        });
+
+        // Fullscreen toggle
+        fullscreenBtn.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                fullscreenBtn.innerHTML = '<i class="bi bi-fullscreen-exit"></i>';
+            } else {
+                document.exitFullscreen();
+                fullscreenBtn.innerHTML = '<i class="bi bi-fullscreen"></i>';
+            }
+        });
+
+        // Fit width
+        fitWidthBtn.addEventListener('click', async () => {
+            if (currentFile && pdfDoc) {
+                const page = await pdfDoc.getPage(currentPage);
+                const viewport = page.getViewport({ scale: 1 });
+                const containerWidth = document.querySelector('.viewer').clientWidth;
+                currentZoom = (containerWidth / viewport.width) * 100;
+                renderPage(currentPage);
+            }
+        });
+
+        // Fit height
+        fitHeightBtn.addEventListener('click', async () => {
+            if (currentFile && pdfDoc) {
+                const page = await pdfDoc.getPage(currentPage);
+                const viewport = page.getViewport({ scale: 1 });
+                const containerHeight = document.querySelector('.viewer').clientHeight;
+                currentZoom = (containerHeight / viewport.height) * 100;
+                renderPage(currentPage);
+            }
+        });
+
+        // Load initial file list
+        loadFileList();
+
+        // Restore last viewed file
+        const lastViewed = localStorage.getItem('lastViewed');
+        if (lastViewed) {
+            currentFile = lastViewed;
+            loadPdf(lastViewed);
+        }
+
+        // Search functionality
+        searchBtn.addEventListener('click', () => {
+            searchModal.show();
+        });
+
+        async function performSearch() {
+            const searchTerm = searchText.value;
+            if (!searchTerm || !pdfDoc) return;
+
+            searchMatches = [];
+            currentMatchIndex = -1;
+            searchResults.innerHTML = '';
+            
+            for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+                const page = await pdfDoc.getPage(pageNum);
+                const textContent = await page.getTextContent();
+                const text = textContent.items.map(item => item.str).join(' ');
+                
+                const flags = caseSensitive.checked ? 'g' : 'gi';
+                const regex = new RegExp(searchTerm, flags);
+                let match;
+                
+                while ((match = regex.exec(text)) !== null) {
+                    searchMatches.push({
+                        page: pageNum,
+                        index: match.index,
+                        text: match[0],
+                        context: text.substring(Math.max(0, match.index - 20), Math.min(text.length, match.index + match[0].length + 20))
+                    });
+                }
+            }
+
+            updateSearchResults();
+        }
+
+        function updateSearchResults() {
+            searchResults.innerHTML = '';
+            searchResultsCount.textContent = `${searchMatches.length} matches found`;
+            
+            searchMatches.forEach((match, index) => {
+                const item = document.createElement('button');
+                item.className = `list-group-item list-group-item-action ${index === currentMatchIndex ? 'active' : ''}`;
+                item.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">Page ${match.page}</small>
+                        <small class="text-muted">Match ${index + 1}/${searchMatches.length}</small>
+                    </div>
+                    <div class="mt-1">${highlightMatch(match.context, match.text)}</div>
+                `;
+                item.addEventListener('click', () => {
+                    currentMatchIndex = index;
+                    navigateToMatch(match);
+                    updateSearchResults();
+                });
+                searchResults.appendChild(item);
+            });
+
+            prevMatchBtn.disabled = currentMatchIndex <= 0;
+            nextMatchBtn.disabled = currentMatchIndex >= searchMatches.length - 1;
+            replaceBtn.disabled = currentMatchIndex === -1;
+            replaceAllBtn.disabled = searchMatches.length === 0;
+        }
+
+        function highlightMatch(context, match) {
+            const regex = new RegExp(match, caseSensitive.checked ? 'g' : 'gi');
+            return context.replace(regex, '<mark>$&</mark>');
+        }
+
+        function navigateToMatch(match) {
+            currentPage = match.page;
+            renderPage(currentPage);
+        }
+
+        // Search event listeners
+        searchText.addEventListener('input', debounce(performSearch, 300));
+        caseSensitive.addEventListener('change', performSearch);
+
+        prevMatchBtn.addEventListener('click', () => {
+            if (currentMatchIndex > 0) {
+                currentMatchIndex--;
+                navigateToMatch(searchMatches[currentMatchIndex]);
+                updateSearchResults();
+            }
+        });
+
+        nextMatchBtn.addEventListener('click', () => {
+            if (currentMatchIndex < searchMatches.length - 1) {
+                currentMatchIndex++;
+                navigateToMatch(searchMatches[currentMatchIndex]);
+                updateSearchResults();
+            }
+        });
+
+        // Replace functionality
+        replaceBtn.addEventListener('click', async () => {
+            if (currentMatchIndex === -1) return;
+            
+            const match = searchMatches[currentMatchIndex];
+            try {
+                const response = await fetch('/replace', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        filename: currentFile,
+                        searchText: searchText.value,
+                        replaceText: replaceText.value,
+                        pageNum: match.page,
+                        matchIndex: currentMatchIndex
+                    })
+                });
+
+                const data = await response.json();
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                } else {
+                    // Reload the PDF to show changes
+                    await loadPdf(currentFile);
+                    // Update search results
+                    await performSearch();
+                    alert('Text replaced successfully');
+                }
+            } catch (error) {
+                console.error('Error replacing text:', error);
+                alert('Error replacing text. Please try again.');
+            }
+        });
+
+        replaceAllBtn.addEventListener('click', async () => {
+            if (searchMatches.length === 0) return;
+            
+            try {
+                // Process each match in reverse order to maintain correct indices
+                for (let i = searchMatches.length - 1; i >= 0; i--) {
+                    const match = searchMatches[i];
+                    const response = await fetch('/replace', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            filename: currentFile,
+                            searchText: searchText.value,
+                            replaceText: replaceText.value,
+                            pageNum: match.page,
+                            matchIndex: i
+                        })
+                    });
+
+                    const data = await response.json();
+                    if (data.error) {
+                        alert('Error: ' + data.error);
+                        break;
+                    }
+                }
+
+                // Reload the PDF to show changes
+                await loadPdf(currentFile);
+                // Update search results
+                await performSearch();
+                alert('All occurrences replaced successfully');
+            } catch (error) {
+                console.error('Error replacing text:', error);
+                alert('Error replacing text. Please try again.');
+            }
+        });
+
+        // Utility function for debouncing
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Add keyboard shortcuts for search
+        document.addEventListener('keydown', (e) => {
+            if (currentFile) {
+                if (e.ctrlKey && e.key === 'f') {
+                    e.preventDefault();
+                    searchModal.show();
+                }
+            }
+        });
+
+        // Create annotation layer
+        function createAnnotationLayer() {
+            const layer = document.createElement('div');
+            layer.className = 'annotation-layer';
+            layer.style.width = pdfCanvas.width + 'px';
+            layer.style.height = pdfCanvas.height + 'px';
+            pdfCanvas.parentElement.appendChild(layer);
+            return layer;
+        }
+        
+        // Update annotation layer position
+        function updateAnnotationLayer() {
+            const layer = document.querySelector('.annotation-layer');
+            if (layer) {
+                layer.style.width = pdfCanvas.width + 'px';
+                layer.style.height = pdfCanvas.height + 'px';
+                layer.style.transform = `scale(${currentZoom / 100})`;
+            }
+        }
+        
+        // Save annotations
+        function saveAnnotations() {
+            if (currentFile) {
+                const annotationsData = Array.from(annotations.entries()).map(([page, pageAnnotations]) => ({
+                    page,
+                    annotations: pageAnnotations
+                }));
+                localStorage.setItem(`annotations_${currentFile}`, JSON.stringify(annotationsData));
+            }
+        }
+        
+        // Load annotations
+        function loadAnnotations() {
+            if (currentFile) {
+                const savedAnnotations = localStorage.getItem(`annotations_${currentFile}`);
+                if (savedAnnotations) {
+                    const annotationsData = JSON.parse(savedAnnotations);
+                    annotations = new Map(annotationsData.map(data => [data.page, data.annotations]));
+                    renderAnnotations();
+                }
+            }
+        }
+        
+        // Render annotations for current page
+        function renderAnnotations() {
+            const layer = document.querySelector('.annotation-layer') || createAnnotationLayer();
+            layer.innerHTML = '';
+            
+            const pageAnnotations = annotations.get(currentPage) || [];
+            pageAnnotations.forEach(annotation => {
+                const element = createAnnotationElement(annotation);
+                layer.appendChild(element);
+            });
+        }
+        
+        // Create annotation element
+        function createAnnotationElement(annotation) {
+            const element = document.createElement('div');
+            element.className = `annotation ${annotation.type}`;
+            element.style.left = annotation.x + 'px';
+            element.style.top = annotation.y + 'px';
+            element.style.width = annotation.width + 'px';
+            element.style.height = annotation.height + 'px';
+            element.style.color = annotation.color;
+            
+            if (annotation.type === 'text-note') {
+                element.textContent = annotation.text;
+            }
+            
+            return element;
+        }
+        
+        // Tool selection
+        highlightTool.addEventListener('click', () => {
+            currentTool = 'highlight';
+            colorPickerModal.show();
+        });
+        
+        textTool.addEventListener('click', () => {
+            currentTool = 'text-note';
+            colorPickerModal.show();
+        });
+        
+        rectangleTool.addEventListener('click', () => {
+            currentTool = 'rectangle';
+            colorPickerModal.show();
+        });
+        
+        circleTool.addEventListener('click', () => {
+            currentTool = 'circle';
+            colorPickerModal.show();
+        });
+        
+        clearAnnotations.addEventListener('click', () => {
+            if (confirm('Are you sure you want to clear all annotations?')) {
+                annotations.clear();
+                renderAnnotations();
+                saveAnnotations();
+            }
+        });
+        
+        // Color selection
+        document.querySelectorAll('.color-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                currentColor = btn.dataset.color;
+                colorPickerModal.hide();
+            });
+        });
+        
+        // Mouse events for drawing
+        pdfCanvas.addEventListener('mousedown', (e) => {
+            if (!currentTool) return;
+            
+            isDrawing = true;
+            const rect = pdfCanvas.getBoundingClientRect();
+            startX = (e.clientX - rect.left) / (currentZoom / 100);
+            startY = (e.clientY - rect.top) / (currentZoom / 100);
+            
+            if (currentTool === 'text-note') {
+                const text = prompt('Enter note text:');
+                if (text) {
+                    const annotation = {
+                        type: 'text-note',
+                        x: startX,
+                        y: startY,
+                        width: 200,
+                        height: 100,
+                        color: currentColor,
+                        text: text
+                    };
+                    
+                    if (!annotations.has(currentPage)) {
+                        annotations.set(currentPage, []);
+                    }
+                    annotations.get(currentPage).push(annotation);
+                    renderAnnotations();
+                    saveAnnotations();
+                }
+            }
+        });
+        
+        pdfCanvas.addEventListener('mousemove', (e) => {
+            if (!isDrawing || !currentTool || currentTool === 'text-note') return;
+            
+            const rect = pdfCanvas.getBoundingClientRect();
+            const currentX = (e.clientX - rect.left) / (currentZoom / 100);
+            const currentY = (e.clientY - rect.top) / (currentZoom / 100);
+            
+            const width = Math.abs(currentX - startX);
+            const height = Math.abs(currentY - startY);
+            const x = Math.min(startX, currentX);
+            const y = Math.min(startY, currentY);
+            
+            if (currentAnnotation) {
+                currentAnnotation.style.left = x + 'px';
+                currentAnnotation.style.top = y + 'px';
+                currentAnnotation.style.width = width + 'px';
+                currentAnnotation.style.height = height + 'px';
+            } else {
+                currentAnnotation = document.createElement('div');
+                currentAnnotation.className = `annotation ${currentTool}`;
+                currentAnnotation.style.color = currentColor;
+                document.querySelector('.annotation-layer').appendChild(currentAnnotation);
+            }
+        });
+        
+        pdfCanvas.addEventListener('mouseup', () => {
+            if (!isDrawing || !currentTool || currentTool === 'text-note') return;
+            
+            isDrawing = false;
+            if (currentAnnotation) {
+                const rect = currentAnnotation.getBoundingClientRect();
+                const annotation = {
+                    type: currentTool,
+                    x: rect.left,
+                    y: rect.top,
+                    width: rect.width,
+                    height: rect.height,
+                    color: currentColor
+                };
+                
+                if (!annotations.has(currentPage)) {
+                    annotations.set(currentPage, []);
+                }
+                annotations.get(currentPage).push(annotation);
+                saveAnnotations();
+            }
+            currentAnnotation = null;
+        });
+
+        // Word Analysis
+        analyzeWordsBtn.addEventListener('click', async () => {
+            if (!currentFile) {
+                alert('Please open a PDF file first');
+                return;
+            }
+            
+            wordAnalysisModal.show();
+            wordAnalysisStatus.textContent = 'Analyzing page...';
+            wordAnalysisResults.classList.add('d-none');
+            
+            try {
+                const response = await fetch('/analyze-words', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        filename: currentFile,
+                        pageNum: currentPage,
+                        action: 'highlight'
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.error) {
+                    wordAnalysisStatus.textContent = 'Error: ' + data.error;
+                    return;
+                }
+                
+                currentWeakWords = data.weak_words;
+                weakWordCount.textContent = data.total;
+                
+                if (data.total > 0) {
+                    wordAnalysisResults.classList.remove('d-none');
+                    weakWordsList.innerHTML = data.weak_words.map(word => `
+                        <tr>
+                            <td>${word.word}</td>
+                            <td>${word.strong_word}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary replace-word" 
+                                        data-word="${word.word}" 
+                                        data-replacement="${word.strong_word}">
+                                    Replace
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                    
+                    // Add event listeners to replace buttons
+                    addReplaceWordListeners();
+                } else {
+                    wordAnalysisStatus.textContent = 'No weak words found on this page.';
+                }
+            } catch (error) {
+                console.error('Error analyzing words:', error);
+                wordAnalysisStatus.textContent = 'Error analyzing words. Please try again.';
+            }
+        });
+        
+        replaceWordsBtn.addEventListener('click', async () => {
+            if (!currentFile) {
+                alert('Please open a PDF file first');
+                return;
+            }
+            
+            if (confirm('Replace all weak words with strong alternatives?')) {
+                try {
+                    const response = await fetch('/analyze-words', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            filename: currentFile,
+                            pageNum: currentPage,
+                            action: 'replace'
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `improved_${currentFile}`;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                    } else {
+                        const data = await response.json();
+                        alert('Error: ' + data.error);
+                    }
+                } catch (error) {
+                    console.error('Error replacing words:', error);
+                    alert('Error replacing words. Please try again.');
+                }
+            }
+        });
+        
+        replaceAllWordsBtn.addEventListener('click', () => {
+            replaceWordsBtn.click();
+        });
+
+        // Add event listeners to replace buttons
+        function addReplaceWordListeners() {
+            document.querySelectorAll('.replace-word').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const word = btn.dataset.word;
+                    const replacement = btn.dataset.replacement;
+                    if (!currentFile) {
+                        showMessage('No file selected!', 'danger');
+                        return;
+                    }
+                    try {
+                        const response = await fetch('/replace-in-docx', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                filename: currentFile,
+                                searchText: word,
+                                replaceText: replacement
+                            })
+                        });
+                        const data = await response.json();
+                        if (data.error) {
+                            showMessage('Error: ' + data.error, 'danger');
+                        } else {
+                            showMessage('Replacement done! Reloading new PDF...', 'success');
+                            currentFile = data.pdf_filename;
+                            loadPdf(currentFile);
+                            loadFileList();
+                        }
+                    } catch (error) {
+                        showMessage('Error replacing word: ' + error, 'danger');
+                    }
+                });
+            });
+        }
+
+        function showMessage(message, type = 'danger') {
+            const box = document.getElementById('messageBox');
+            box.textContent = message;
+            box.className = `alert alert-${type}`;
+            box.classList.remove('d-none');
+            setTimeout(() => {
+                box.classList.add('d-none');
+            }, 4000);
+        }
+    </script>
+</body>
+</html> 

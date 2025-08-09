@@ -1,0 +1,419 @@
+COURSE NAME AND ID 
+ 
+                            PROJECT PROPOSAL 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Page 1 
+PROJECT AND TEAM INFORMATION 
+Project Title 
+(Try to choose a catchy title. Max 20 words). 
+PDFXlorer (PDF Improviser) 
+Student / Team Information 
+Team Name: 
+Team #  
+INNOVISION 
+Team member 1 (Team Lead) 
+(Last Name, name: student ID:  email, picture): 
+Aswal, Raghav – 230111889 
+raghav06aswal@gmail.com 
+ 
+Team member 2 
+(Last Name, name: student ID:  email, picture): 
+Khan, Mohd Hasnain – 230124940 
+hasnainkhan2005uk@gmail.com 
+ 
+ 
+COURSE NAME AND ID 
+ 
+                            PROJECT PROPOSAL 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Page 2 
+ 
+ 
+Team member 3  
+(Last Name, name: student ID:  email, picture): 
+Rawat, Amit – 23011223 
+amitrawat2025@gmail.com 
+ 
+Team member 4 
+(Last Name, name: student ID:  email, picture): 
+Deopa, Ayush – 230111448 
+iitanjirokamado@gmail.com 
+ 
+ 
+ 
+COURSE NAME AND ID 
+ 
+                            PROJECT PROPOSAL 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Page 3 
+PROPOSAL DESCRIPTION (10 pts) 
+Motivation (1 pt) 
+(Describe the problem you want to solve and why it is important. Max 300 words). 
+In today's digital world, PDFs are one of the most widely used document formats, but their editing capabilities 
+remain limited. Users often struggle with basic tasks like searching for words, modifying content, or adjusting 
+document views without using expensive software. 
+Our project, PDFXplorer, aims to solve these challenges by providing an intelligent, AI-powered tool that allows 
+users to: 
+1) Zoom in and out for better readability. 
+2) Search for specific words or phrases within the document. 
+3) Replace words or entire statements using AI while maintaining the document’s context. 
+4) Save modifications easily, eliminating the need for complex software. 
+This project is especially beneficial for students, researchers, and professionals who frequently handle PDFs and 
+need efficient editing capabilities. Unlike traditional PDF editors, which require manual modifications, our AI-based 
+approach intelligently understands context and suggests accurate replacements. 
+By integrating C++ (for backend processing), Poppler (for PDF handling), and AI (for smart modifications), 
+PDFXplorer will offer a seamless and user-friendly experience for PDF document exploration and editing.  
+ 
+State of the Art / Current solution (1 pt) 
+(Describe how the problem is solved today (if it is). Max 200 words). 
+Currently, PDF editing and modification are handled by various software solutions like Adobe Acrobat, Foxit Reader, 
+and online PDF editors. These tools provide functionalities such as zooming, text search, and basic text replacement. 
+However, they come with several limitations: 
+1. High Cost – Most advanced PDF editors require expensive subscriptions (e.g., Adobe Acrobat Pro). 
+2. Limited AI-based Editing – Existing tools offer manual find-and-replace functions but lack AI-powered 
+context-aware modifications for word and statement replacements. 
+3. Heavy & Resource-Intensive – Many PDF editors are bulky and require significant system resources. 
+4. Online Solutions Are Privacy Risky – Cloud-based editors store documents online, which raises security 
+concerns. 
+5. Limited Customization & Automation – Most existing editors do not support automated AI-based content 
+modifications for large documents, making batch processing difficult. 
+6. Dependency on Proprietary Software – Many existing solutions rely on closed-source software, limiting 
+customization and flexibility for users who need tailored features. 
+While open-source libraries like Poppler and MuPDF provide basic PDF processing capabilities, they lack a user-
+friendly interface and AI-driven word replacement. 
+How PDFXplorer Improves Upon This 
+PDFXplorer aims to provide a lightweight, AI-powered alternative that: 
+1) Uses AI for smarter word & statement replacements 
+2) Is open-source & cost-effective 
+3) Works offline, ensuring privacy & security 
+4) Provides an intuitive interface for seamless navigation 
+COURSE NAME AND ID 
+ 
+                            PROJECT PROPOSAL 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Page 4 
+Project Goals and Milestones (2 pts) 
+(Describe the project general goals. Include initial milestones as well any other milestones. Max 300 words). 
+1) Project Goals 
+The goal of PDFXplorer is to develop a lightweight, AI-powered PDF editor that enables users to: 
+- Open and view PDFs with zoom-in and zoom-out functionality. 
+- Search for specific words or phrases within a PDF document. 
+- Replace words using AI while maintaining contextual accuracy. 
+- Replace entire statements using AI, ensuring semantic consistency. 
+- Provide an intuitive GUI for easy interaction and navigation. 
+- Work offline, ensuring privacy and security without reliance on cloud-based solutions. 
+This project aims to offer a free, open-source, and efficient alternative to existing expensive or resource-heavy PDF 
+editors, making document modification more accessible to a broader audience. 
+ 
+2)  Milestones and Timeline 
+- Phase 1: Research & Setup (Week 1-2) 
+ 
+Identify the best libraries for PDF handling (Poppler), AI integration (NLP models), and GUI development 
+(Qt for Desktop GUI). 
+ 
+Install and configure vcpkg, Poppler, and required dependencies. 
+ 
+Set up a basic C++ project structure. 
+- Phase 2: Core Functionalities Development (Week 3-6) 
+ 
+Implement PDF loading and rendering using Poppler. 
+ 
+Add zoom-in and zoom-out features for better document viewing. 
+ 
+Implement word search functionality using text extraction. 
+ 
+Develop word replacement logic (initially basic, then AI-enhanced). 
+- Phase 3: AI Integration & Advanced Features (Week 7-9) 
+ 
+Integrate AI models for intelligent word and statement replacement. 
+ 
+Train or fine-tune an NLP model (if necessary) for context-aware modifications. 
+ 
+Implement batch processing for bulk document modifications. 
+- Phase 4: GUI Development & Integration (Week 10-12) 
+ 
+Build a user-friendly frontend using Qt (for a Desktop App). 
+ 
+Link the C++ backend with the GUI for seamless interaction. 
+ 
+Test all functionalities, including text search, AI-based editing, and PDF saving. 
+- Phase 5: Final Testing, Optimization & Deployment (Week 13-14) 
+ 
+Conduct bug fixes, performance optimizations, and stress testing. 
+ 
+Package the project into an installer (.exe for Windows). 
+ 
+Release the first version of PDFXplorer and collect user feedback for future improvements. 
+This structured approach ensures a step-by-step development process, allowing for efficient implementation of all 
+core features while maintaining high performance and usability. 
+ 
+ 
+ 
+COURSE NAME AND ID 
+ 
+                            PROJECT PROPOSAL 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Page 5 
+Project Approach (3 pts) 
+(Describe how you plan to articulate and design a solution. Including platforms and technologies that you will use. Max 
+300 words). 
+- Solution Design 
+The PDFXplorer project will be designed as a desktop application with a C++ backend and a GUI built using Qt. It will 
+utilize AI-based natural language processing (NLP) for intelligent text and statement replacement while leveraging 
+Poppler for PDF rendering and manipulation. The approach is structured into multiple layers: 
+1. Backend (C++ with Poppler & AI Integration) 
+o 
+Handles PDF rendering, text extraction, search, and modifications. 
+o 
+Uses Poppler to process PDFs efficiently. 
+o 
+Implements AI-based word and statement replacement using NLP models (e.g., GPT-based or custom-
+trained models). 
+2. AI Layer (Natural Language Processing) 
+o 
+Integrates pre-trained NLP models (such as transformers from Hugging Face) to ensure context-
+aware modifications. 
+o 
+Uses TensorFlow or ONNX for running lightweight AI models locally. 
+3. Frontend (Qt for GUI) 
+o 
+Provides a user-friendly interface for document navigation and editing. 
+o 
+Implements buttons, text input fields, and preview options for an interactive experience. 
+o 
+Allows real-time modifications and PDF saving. 
+ 
+- Technologies & Platforms 
+1) Programming Language: C++ (for high performance and system efficiency). 
+2) PDF Processing Library: Poppler (for extracting, searching, and modifying PDFs). 
+3) AI/NLP Frameworks: TensorFlow, PyTorch, Hugging Face Transformers (for AI-based text modifications). 
+4) GUI Framework: Qt (for a responsive and modern user interface). 
+5) Development Environment: Visual Studio, CMake, and vcpkg for dependency management. 
+6) Platform Support: Windows (initially), with potential Linux/macOS support. 
+ 
+- Development Workflow 
+1) Modular Development: Separate modules for PDF processing, AI integration, and GUI. 
+2) Incremental Testing: Implement and test features individually before integration. 
+3) Performance Optimization: Use efficient data structures and optimize AI models for local execution. 
+4) Security & Privacy: Ensure offline processing to maintain user privacy. 
+By following this structured approach, PDFXplorer will be a fast, intelligent, and privacy-focused PDF editing solution. 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+COURSE NAME AND ID 
+ 
+                            PROJECT PROPOSAL 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Page 6 
+System Architecture (High Level Diagram)(2 pts) 
+(Provide an overview of the system, identifying its main components and interfaces in the form of a diagram using a tool 
+of your choice). 
+The simplified system architecture diagram for PDFXplorer illustrates the interaction between its core components: 
+1) User Interface (Qt GUI): The front-end where users interact with the application, enabling actions like zooming, 
+searching, and AI-powered word replacement. 
+2) Backend (C++ Core): Acts as the central controller, processing user requests and managing PDF operations. It 
+connects the GUI with other system components. 
+3) PDF Processor (Poppler Library): Responsible for handling PDFs, including rendering, text extraction, search 
+functionality, and basic modifications. 
+4) AI Engine (NLP Model): Uses machine learning (like TensorFlow or ONNX) to perform context-aware word and 
+statement replacements based on the document’s content. 
+5) File Manager: Manages file operations, including opening, modifying, and saving PDFs after processing. 
+Arrows in the diagram depict the data flow between these components, ensuring a modular and structured approach to 
+PDF editing with AI enhancements.  
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+COURSE NAME AND ID 
+ 
+                            PROJECT PROPOSAL 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Page 7 
+Project Outcome / Deliverables (1 pts) 
+(Describe what are the outcomes / deliverables of the project. Max 200 words). 
+The PDFXplorer project will deliver a fully functional AI-powered desktop application for intelligent PDF editing and 
+exploration. The key outcomes include: 
+1) PDFXplorer Desktop Application: 
+ 
+A user-friendly desktop app with an intuitive GUI (Qt-based) for seamless PDF navigation and editing. 
+ 
+Core features: Zoom in/out, text search, AI-powered word replacement, and statement modification. 
+2) AI-Powered NLP Engine: 
+ 
+Integration of natural language processing (NLP) for context-aware word and statement replacement. 
+ 
+Uses pre-trained AI models for intelligent text modification. 
+3) Efficient PDF Processing Module: 
+ 
+Utilizes Poppler for PDF rendering, text extraction, and modifications. 
+ 
+Ensures fast and accurate PDF handling. 
+4) Codebase & Documentation: 
+ 
+A well-structured, modular C++ codebase with proper comments and explanations. 
+ 
+Comprehensive documentation, including setup instructions, system architecture, and usage guide. 
+5) Performance & Usability Testing Reports: 
+ 
+Results of testing and debugging to ensure reliability. 
+ 
+User feedback reports for future improvements. 
+The final deliverable will be a robust, AI-enhanced PDF editor, improving document interaction efficiency. 
+ 
+Assumptions  
+( Describe the assumptions ( if any ) you are making to solve the problem. Max 100 words ) 
+To ensure the feasibility of PDFXplorer, we are making the following assumptions while developing the project: 
+1) Users are familiar with basic PDF operations – We assume that users understand basic functionalities like zooming, 
+searching, and editing PDFs, meaning there is no need for extensive training or tutorials. 
+2) PDF files contain selectable and editable text – The tool relies on text-based PDFs rather than scanned documents or 
+image-based PDFs. If users need to edit scanned documents, optical character recognition (OCR) would be required, 
+which is currently outside the project’s scope. 
+3) AI-powered text replacement will be contextually accurate but may require human validation – The NLP model will 
+attempt to replace words and statements based on context, but some modifications may need manual verification, 
+especially in complex documents with ambiguous phrasing. 
+4) The primary platform for development and usage is Windows OS – The initial release will focus on Windows, 
+assuming users will have the necessary dependencies installed. Future support for Linux/macOS will depend on demand 
+and feasibility. 
+5) Computational resources will be sufficient for AI processing – The application assumes users have at least a 
+moderate-level CPU and RAM for smooth processing of AI-based tasks without excessive lag. Running advanced NLP 
+models requires a reasonable amount of memory and processing power. 
+6) Users will work with locally stored PDF files – The project does not rely on cloud-based PDF processing. All 
+modifications and AI-based text replacements will be performed locally on the user’s machine, ensuring privacy and 
+security. 
+7) Internet connectivity is optional – While the initial AI models can run locally, users may require an internet 
+connection for updates or additional AI model downloads. 
+COURSE NAME AND ID 
+ 
+                            PROJECT PROPOSAL 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+Page 8 
+By defining these assumptions, we establish the project’s boundaries and clarify what users can expect when using 
+PDFXplorer. 
+References 
+(Provide a list of resources or references you utilised for the completion of this deliverable. You may provide links). 
+Below are the key resources and references used for the development of PDFXplorer: 
+1) C++ & Qt for GUI Development: 
+ 
+Qt Documentation: https://doc.qt.io/ 
+ 
+C++ Programming Language: https://cplusplus.com/ 
+2) PDF Processing with Poppler Library: 
+ 
+Poppler GitHub Repository: https://github.com/freedesktop/poppler 
+3) Natural Language Processing (NLP) for AI-powered Text Replacement: 
+ 
+TensorFlow NLP: https://www.tensorflow.org/text 
+ 
+Hugging Face Transformers: https://huggingface.co/docs/transformers/index 
+4) Dependency Management & Build Tools: 
+ 
+Vcpkg Package Manager: https://vcpkg.io/ 
+5) General AI & ML Concepts: 
+ 
+Stanford NLP Course: https://nlp.stanford.edu/ 
+These resources have been instrumental in guiding the development of PDFXplorer, ensuring a robust and well-
+structured approach to AI-powered PDF editing. 
+ 
